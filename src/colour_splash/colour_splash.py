@@ -40,6 +40,8 @@ class __config:
         "overline": 53,
     }
 
+colour_list = []
+
 def colour(text:str, foreground:str = "none", background:str = "none"):
     if ("TERM" not in os.environ.keys() or platform.uname().system == "Windows") and not settings.force_colours:
         return text
@@ -55,7 +57,7 @@ def colour(text:str, foreground:str = "none", background:str = "none"):
     return f"{prefix}{text}{suffix}"
 
 def style(text:str, style:str = "none"):
-    if ("TERM" not in os.environ.keys() or (platform.uname().system == "Windows" and "TERM" not in os.environ.keys())) and not settings.force_colours:
+    if ("TERM" not in os.environ.keys() or platform.uname().system == "Windows") and not settings.force_colours:
         return text
 
     if style not in __config.style_prefix:
@@ -64,6 +66,33 @@ def style(text:str, style:str = "none"):
     prefix = f"{__config.escape_start}{__config.style_prefix[style]}{__config.escape_end}"
     suffix = suffix = f"{__config.escape_start}0{__config.escape_end}"
     return f"{prefix}{text}{suffix}"
+
+def colour_start(foreground:str = "none", background:str = "none"):
+    colour_list.append([foreground, background, "none"])
+    return f"{__config.escape_start}3{__config.colour_suffix[foreground]};4{__config.colour_suffix[background]}{__config.escape_end}"
+
+def colour_end():
+    global colour_list
+    if len(colour_list) == 0:
+        return
+    
+    if len(colour_list) == 1:
+        colour_list = colour_list[0:-1]
+        return f"{__config.escape_start}3{__config.colour_suffix['none']};4{__config.colour_suffix['none']}{__config.escape_end}"
+    
+    previous_colour = colour_list[-2]
+    colour_list = colour_list[0:-1]
+    if previous_colour[0] == "none" and previous_colour[1] == "none" and previous_colour[2] != ["none"]:
+        return f"{__config.escape_start}{__config.style_prefix[previous_colour[2]]}{__config.escape_end}"
+
+    return f"{__config.escape_start}3{__config.colour_suffix[previous_colour[0]]};4{__config.colour_suffix[previous_colour[1]]}{__config.escape_end}"
+
+def style_start(style:str = "none"):
+    colour_list.append(["none", "none", style])
+    return f"{__config.escape_start}{__config.style_prefix[style]}{__config.escape_end}"
+
+def style_end():
+    return colour_end()
 
 def help():
     print("Foreground Colours")

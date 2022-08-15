@@ -24,5 +24,22 @@ Changes the style of text
 - `text`: the text you wish to be styled
 - `style` (optional): the string value of the name of the style you wish to use
 
+### `colour_splash.colour_start()`
+Starts a specific colour for all proceeding text
+#### Parameters:
+- `foreground` (optional): the string value of the name of the colour you wish to use as the foreground (text) colour
+- `background` (optional): the string value of the name of the colour you wish to use as the background (highlighted) colour
+
+### `colour_splash.style_start()`
+Starts a specific style for all proceeding text
+#### Parameters:
+- `style` (optional): the string value of the name of the style you wish to use
+
+### `colour_splash.colour_end()`
+Returns the proceeding text to its previous colour/style
+
+### `colour_splash.style_end()`
+Returns the proceeding text to its previous colour/style
+
 ### `colour_splash.help()`
 Lists colours and styles and how they appear on your system
