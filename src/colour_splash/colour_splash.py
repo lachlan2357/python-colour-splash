@@ -1,5 +1,32 @@
-import os
-import platform
+from os import environ
+from platform import uname
+from enum import Enum
+from typing import Union
+
+class colours(Enum):
+    black = 0
+    red = 1
+    green = 2
+    yellow = 3
+    blue = 4
+    magenta = 5
+    cyan = 6
+    white = 7
+    none = 9
+
+class styles(Enum):
+    none = 0
+    bright = 1
+    dim = 2
+    italic = 3
+    underline = 4
+    slow_blink = 5
+    fast_blink = 6
+    invert = 7
+    hide = 8
+    strikethrough = 9
+    double_underline = 21
+    overline = 53
 
 class settings:
     force_colours = False
@@ -42,28 +69,46 @@ class __config:
 
 colour_list = []
 
-def colour(text:str, foreground:str = "none", background:str = "none"):
-    if ("TERM" not in os.environ.keys() or platform.uname().system == "Windows") and not settings.force_colours:
+def colour(text:str, foreground:Union[colours,str] = colours.none, background:Union[colours,str] = colours.none):
+    if ("TERM" not in environ.keys() or uname().system == "Windows") and not settings.force_colours:
         return text
 
-    if foreground not in __config.colour_suffix:
-        raise TypeError(f"\"{foreground}\" is not a valid colour")
+    foreground_num = __config.colour_suffix[foreground] if type(foreground) == str else foreground.value
+    background_num = __config.colour_suffix[background] if type(background) == str else background.value
+    
+    if type(foreground) == str:
+        if foreground not in __config.colour_suffix:
+            raise TypeError(f"\"{foreground}\" is not a valid colour")
+    else:
+        if foreground not in colours:
+            raise TypeError(f"\"{foreground.name}\" is not a valid colour")
 
-    if background not in __config.colour_suffix:
-        raise TypeError(f"\"{background}\" is not a valid colour")
-
-    prefix = f"{__config.escape_start}3{__config.colour_suffix[foreground]};4{__config.colour_suffix[background]}{__config.escape_end}"
+    if type(background) == str:
+        if background not in __config.colour_suffix:
+            raise TypeError(f"\"{background}\" is not a valid colour")
+    else:
+        if background not in colours:
+            raise TypeError(f"\"{background.name}\" is not a valid colour")
+    
+    prefix = f"{__config.escape_start}3{foreground_num};4{background_num}{__config.escape_end}"
     suffix = f"{__config.escape_start}39;49{__config.escape_end}"
+
     return f"{prefix}{text}{suffix}"
 
-def style(text:str, style:str = "none"):
-    if ("TERM" not in os.environ.keys() or platform.uname().system == "Windows") and not settings.force_colours:
+def style(text:str, style:Union[styles, str] = styles.none):
+    if ("TERM" not in environ.keys() or uname().system == "Windows") and not settings.force_colours:
         return text
 
-    if style not in __config.style_prefix:
-        raise TypeError(f"\"{style}\" is not a valid style")
+    style_num = __config.colour_suffix[style] if type(style) == str else style.value
 
-    prefix = f"{__config.escape_start}{__config.style_prefix[style]}{__config.escape_end}"
+    if type(style) == str:
+        if style not in __config.style_prefix:
+            raise TypeError(f"\"{style}\" is not a valid colour")
+    else:
+        if style not in styles:
+            raise TypeError(f"\"{style.name}\" is not a valid colour")
+
+    prefix = f"{__config.escape_start}{style_num}{__config.escape_end}"
     suffix = suffix = f"{__config.escape_start}0{__config.escape_end}"
     return f"{prefix}{text}{suffix}"
 

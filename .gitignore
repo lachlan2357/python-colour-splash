@@ -1,2 +1,6 @@
 dist
 tests
+*.egg-info
+__pycache__
+.vscode
+uploader*
