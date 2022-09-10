@@ -1,3 +1,17 @@
+# v0.4.0
+## New
+- Enabled coloured outputs by default for Windows terminals which support it (e.g. PowerShell, Windows Terminal)
+- New setting `colour_splash.settings.no_colours` to manually disable coloured outputs. This overrides `colour_splash.settings.force_colours`
+- Colours can now be selected through RGB codes using `colour_splash.rgb()`
+- Added docstrings to classes and functions
+
+## Fixed
+- Colours are now enabled on Windows if using the Windows Terminal (which supports ANSI colours)
+- Fixed issue where help screen would error out when outputting styles
+- Incorrect colour and style names now raise a ValueError rather than a TypeError
+- Fixed issue where parameters for `colour_start` and `colour_end` could only be strings
+- Renamed the style parameter to decoration to resolve clash between functions and variables with the same name
+
 # v0.3.0
 ## New
 - Added the ability to choose colours through `colour_splash.colours` and `colour_splash.styles` (e.g. where `"red"` would previously been used, `colour_splash.colours.red`). The previous method is still available
